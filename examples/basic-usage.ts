@@ -1,31 +1,26 @@
 /**
- * Example of improved TypeScript code with type annotations,
- * error handling, and descriptive comments.
- *
- * @module examples/basic-usage
+ * Basic usage examples for GitopsServicemeshDiff
+ * Demonstrates default and verbose logging configurations
  */
+import { GitopsServicemeshDiff } from "../src";
 
-// Import necessary modules
-import { SomeModule } from 'some-package';
+async function main(): Promise<void> {
+  try {
+    // Example 1: Create with default options
+    console.log("Running with default options...\n");
+    const instance = new GitopsServicemeshDiff();
+    const result = await instance.run();
+    console.log("Default run result:", result);
 
-/**
- * Function to demonstrate basic usage with improved TypeScript typings.
- *
- * @param input - The input parameter of type string.
- * @returns A greeting message or an error message.
- */
-function greet(input: string): string {
-    try {
-        if (!input) {  // Check for empty input
-            throw new Error('Input cannot be empty');
-        }
-        return `Hello, ${input}!`;
-    } catch (error) {
-        // Handle errors gracefully
-        return `Error: ${error.message}`;
-    }
+    // Example 2: Create with verbose logging
+    console.log("\nRunning with verbose logging...\n");
+    const verbose = new GitopsServicemeshDiff({ verbose: true });
+    const verboseResult = await verbose.run();
+    console.log("Verbose run result:", verboseResult);
+  } catch (error) {
+    console.error("Error during execution:", error);
+    process.exit(1);
+  }
 }
 
-// Example usage
-const message = greet('World');
-console.log(message); // Outputs: Hello, World!
+main();
