@@ -1,0 +1,14 @@
+{
+  "hsToolsmith": true,
+  "title": "gitops-servicemesh-diff",
+  "pitch": "Diff and validate Istio/GitOps changes with policy checks before merge and sync.",
+  "language": "typescript",
+  "category": "Testing",
+  "keyFeatures": [
+    "Render Helm/Kustomize and compute semantic diffs for Istio resources",
+    "Detect breaking traffic-policy changes (VirtualService/DestinationRule/PeerAuthentication)",
+    "OPA/Kyverno-style rule engine for custom mesh guardrails",
+    "GitHub Actions-compatible CLI output with annotations"
+  ],
+  "targetUsers": "Kubernetes/Istio teams using Argo CD/Helm who need PR-time safety checks for mesh and GitOps manifests."
+}
