@@ -1,14 +1,1 @@
-{
-  "hsToolsmith": true,
-  "title": "gitops-servicemesh-diff",
-  "pitch": "Diff and validate Istio/GitOps changes with policy checks before merge and sync.",
-  "language": "typescript",
-  "category": "Testing",
-  "keyFeatures": [
-    "Render Helm/Kustomize and compute semantic diffs for Istio resources",
-    "Detect breaking traffic-policy changes (VirtualService/DestinationRule/PeerAuthentication)",
-    "OPA/Kyverno-style rule engine for custom mesh guardrails",
-    "GitHub Actions-compatible CLI output with annotations"
-  ],
-  "targetUsers": "Kubernetes/Istio teams using Argo CD/Helm who need PR-time safety checks for mesh and GitOps manifests."
-}
+{\n  "hsToolsmith": true,\n  "version": "1.0",\n  "title": "gitops-servicemesh-diff",\n  "slug": "gitops-servicemesh-diff",\n  "pitch": "Diff and validate Istio/GitOps changes with policy checks before merge and sync.",\n  "description": "Detect breaking changes to Istio and GitOps manifests using semantic diffing and policy-based validation rules.",\n  "language": "typescript",\n  "category": "Testing",\n  "tags": ["istio", "gitops", "kubernetes", "policy", "opa", "kyverno", "ci-cd"],\n  "keyFeatures": [\n    "Semantic diffing for Helm/Kustomize rendered Istio resources",\n    "Breaking change detection for traffic policies (VirtualService, DestinationRule, PeerAuthentication)",\n    "OPA/Kyverno-compatible rule engine for custom mesh guardrails",\n    "GitHub Actions CLI with inline PR annotations"\n  ],\n  "targetUsers": "Kubernetes/Istio teams using Argo CD or Helm who need pre-merge safety checks for mesh configuration changes.",\n  "repository": "sumanthlagadapati/gitops-servicemesh-diff",\n  "license": "Apache-2.0",\n  "requirements": {\n    "kubernetes": ">2.0",\n    "istio": ">1.10"\n  },\n  "links": {\n    "github": "https://github.com/sumanthlagadapati/gitops-servicemesh-diff",\n    "docs": "https://github.com/sumanthlagadapati/gitops-servicemesh-diff#readme"\n  }\n}
