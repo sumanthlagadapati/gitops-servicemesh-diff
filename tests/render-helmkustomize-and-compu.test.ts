@@ -1,6 +1,16 @@
 import { describe, it, expect, vi } from "vitest";
 import { GitopsServicemeshDiff } from "../src";
-import * as child_process from "child_process";
+
+// Mock child_process.spawn globally for all tests
+let spawnImpl: any = undefined;
+vi.mock("child_process", () => ({
+  spawn: (...args: any[]) => {
+    if (typeof spawnImpl === "function") return spawnImpl(...args);
+    throw new Error("No mock implementation set for spawn");
+  }
+}));
+function setSpawnImpl(fn: any) { spawnImpl = fn; }
+function resetSpawnImpl() { spawnImpl = undefined; }
 
 describe("GitopsServicemeshDiff", () => {
   it("should create an instance with default options", () => {
@@ -61,7 +71,7 @@ spec:
   subsets:
     - name: v1
 `];
-    const result = await instance.renderAndDiff({ oldManifests, newManifests });
+    const result = await instance.renderAndDiff({ renderer: "raw", oldManifests, newManifests });
     expect(result.success).toBe(true);
     expect(result.data).toBeDefined();
     const diff = result.data!;
@@ -73,9 +83,10 @@ spec:
   });
 
   it("should support Helm rendering (mocked)", async () => {
+    afterEach(() => resetSpawnImpl());
     const instance = new GitopsServicemeshDiff();
     // Mock spawn for helm
-    vi.spyOn(child_process, "spawn").mockImplementation((cmd, args) => {
+    setSpawnImpl((cmd: string, args: string[]) => {
       const events: Record<string, Function[]> = { data: [], close: [], error: [] };
       const stdout = { on: (ev: string, cb: Function) => { if (ev === "data") events.data.push(cb); return stdout; } };
       const stderr = { on: () => stderr };
@@ -101,9 +112,10 @@ spec:
   });
 
   it("should support Kustomize rendering (mocked)", async () => {
+    afterEach(() => resetSpawnImpl());
     const instance = new GitopsServicemeshDiff();
     // Mock spawn for kustomize
-    vi.spyOn(child_process, "spawn").mockImplementation((cmd, args) => {
+    setSpawnImpl((cmd: string, args: string[]) => {
       const events: Record<string, Function[]> = { data: [], close: [], error: [] };
       const stdout = { on: (ev: string, cb: Function) => { if (ev === "data") events.data.push(cb); return stdout; } };
       const stderr = { on: () => stderr };
@@ -129,9 +141,10 @@ spec:
   });
 
   it("should handle Helm CLI error (mocked)", async () => {
+    afterEach(() => resetSpawnImpl());
     const instance = new GitopsServicemeshDiff();
     // Mock spawn for helm to simulate error
-    vi.spyOn(child_process, "spawn").mockImplementation((cmd, args) => {
+    setSpawnImpl((cmd: string, args: string[]) => {
       const events: Record<string, Function[]> = { data: [], close: [], error: [] };
       const stdout = { on: (ev: string, cb: Function) => { if (ev === "data") events.data.push(cb); return stdout; } };
       const stderr = { on: (ev: string, cb: Function) => { if (ev === "data") events.data.push(cb); return stderr; } };
@@ -156,9 +169,10 @@ spec:
   });
 
   it("should handle Kustomize CLI error (mocked)", async () => {
+    afterEach(() => resetSpawnImpl());
     const instance = new GitopsServicemeshDiff();
     // Mock spawn for kustomize to simulate error
-    vi.spyOn(child_process, "spawn").mockImplementation((cmd, args) => {
+    setSpawnImpl((cmd: string, args: string[]) => {
       const events: Record<string, Function[]> = { data: [], close: [], error: [] };
       const stdout = { on: (ev: string, cb: Function) => { if (ev === "data") events.data.push(cb); return stdout; } };
       const stderr = { on: (ev: string, cb: Function) => { if (ev === "data") events.data.push(cb); return stderr; } };
@@ -184,7 +198,7 @@ spec:
 
   it("should handle empty manifests", async () => {
     const instance = new GitopsServicemeshDiff();
-    const result = await instance.renderAndDiff({ oldManifests: [], newManifests: [] });
+    const result = await instance.renderAndDiff({ renderer: "raw", oldManifests: [], newManifests: [] });
     expect(result.success).toBe(true);
     expect(result.data).toBeDefined();
     expect(result.data!.added).toHaveLength(0);
@@ -208,7 +222,7 @@ metadata:
   name: foo
   namespace: default
 `];
-    const result = await instance.renderAndDiff({ oldManifests, newManifests });
+    const result = await instance.renderAndDiff({ renderer: "raw", oldManifests, newManifests });
     expect(result.success).toBe(true);
     expect(result.data!.added).toHaveLength(0);
     expect(result.data!.removed).toHaveLength(0);

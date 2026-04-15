@@ -15,6 +15,9 @@
   "files": [
     "dist"
   ],
+  "bin": {
+    "gitops-servicemesh-diff": "./dist/cli.js"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",

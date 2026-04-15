@@ -1,6 +1,6 @@
 import type { GitopsServicemeshDiffOptions, GitopsServicemeshDiffResult, IstioSemanticDiffResult, IstioResource, RenderAndDiffParams, HelmRenderOptions, KustomizeRenderOptions } from "./types";
 import { GitopsServicemeshDiffError } from "./errors";
-import * as yaml from "js-yaml";
+import yaml from "js-yaml";
 import { spawn } from "child_process";
 import { existsSync } from "fs";
 
@@ -57,8 +57,8 @@ export class GitopsServicemeshDiff {
       let oldManifests: string[] = [];
       let newManifests: string[] = [];
       if (params.renderer === "raw") {
-        oldManifests = params.oldManifests;
-        newManifests = params.newManifests;
+        oldManifests = params.oldManifests || [];
+        newManifests = params.newManifests || [];
       } else if (params.renderer === "helm") {
         oldManifests = [await renderHelm(params.oldHelm)];
         newManifests = [await renderHelm(params.newHelm)];
@@ -69,8 +69,17 @@ export class GitopsServicemeshDiff {
         throw new GitopsServicemeshDiffError("Unknown renderer type");
       }
       // Parse YAML manifests
-      const oldObjs = parseIstioManifests(oldManifests);
-      const newObjs = parseIstioManifests(newManifests);
+      let oldObjs: IstioResource[] = [];
+      let newObjs: IstioResource[] = [];
+      try {
+        oldObjs = parseIstioManifests(oldManifests);
+        newObjs = parseIstioManifests(newManifests);
+      } catch (yamlErr) {
+        return {
+          success: false,
+          error: yamlErr instanceof Error ? yamlErr.message : String(yamlErr),
+        };
+      }
       // Compute semantic diff
       const diff = computeIstioSemanticDiff(oldObjs, newObjs);
       return { success: true, data: diff };

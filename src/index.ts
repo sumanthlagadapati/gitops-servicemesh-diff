@@ -4,5 +4,14 @@
  */
 
 export { GitopsServicemeshDiff } from "./render-helmkustomize-and-compu";
-export type { GitopsServicemeshDiffOptions, GitopsServicemeshDiffResult } from "./types";
+export type {
+  GitopsServicemeshDiffOptions,
+  GitopsServicemeshDiffResult,
+  RendererType,
+  HelmRenderOptions,
+  KustomizeRenderOptions,
+  RenderAndDiffParams,
+  IstioSemanticDiffResult,
+  IstioResource
+} from "./types";
 export { GitopsServicemeshDiffError, ConfigurationError, ValidationError } from "./errors";
